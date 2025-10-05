@@ -15,13 +15,13 @@
 
 ✳️ Tech Stack: 
 
-👉 Programming Language: Python 
+👉 Programming Language: Python .
 
-👉 Frameworks: Django, Django REST Framework 
+👉 Frameworks: Django, Django REST Framework .
 
-👉 Frontend: HTML, CSS, Bootstrap, JavaScript 
+👉 Frontend: HTML, CSS,Jinja templates,JavaScript,Bootstrap.
 
-👉 Database: SQLite / PostgreSQL 
+👉 Database: SQLite / PostgreSQL. 
 
 👉 Concepts: CRUD Operations, REST APIs, Authentication & Authorization, Real-time Notifications
 
