@@ -8,7 +8,7 @@
   /* Dedicated container for the registration page, themed to match the homepage */
   .student-register-container {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #e0f7fa 0%, #d1e5f0 100%);
+    background: linear-gradient(135deg, #fdeaea 0%, #ffecec 100%);
     /* This makes the container fill 100% of its parent's (the <main> tag) height */
     height: 100%; 
     width: 100%;
@@ -36,13 +36,13 @@
     font-weight: 700;
     text-align: center;
     margin-bottom: 30px;
-    color: var(--primary-color, #007BFF); /* Using theme variable */
+    color: #e63946; /* Red theme */
     font-size: 1.75rem;
   }
 
   .student-register-container .form-label {
     font-weight: 600;
-    color: var(--text-dark, #212529);
+    color: #212529;
   }
   
   .student-register-container .form-control {
@@ -52,18 +52,24 @@
   }
 
   .student-register-container .form-control:focus {
-      border-color: var(--primary-color, #007BFF);
-      box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+      border-color: #e63946;
+      box-shadow: 0 0 0 0.25rem rgba(230, 57, 70, 0.25);
   }
 
   /* Using the .btn-primary class from the layout for consistency */
   .student-register-container .btn-primary {
     border-radius: 10px;
     padding: 12px;
+    background-color: #e63946;
+    border: none;
+  }
+
+  .student-register-container .btn-primary:hover {
+    background-color: #c92a3b;
   }
 
   .student-register-container a.login-link {
-    color: var(--primary-color, #007BFF);
+    color: #e63946;
     font-weight: 600;
     text-decoration: none;
   }
@@ -76,8 +82,8 @@
   .floating-shape {
     position: absolute;
     border-radius: 30%;
-    opacity: 0.1;
-    background: var(--primary-color, #007BFF);
+    opacity: 0.08;
+    background: #e63946;
     animation: float 20s infinite linear;
     z-index: 0;
   }
@@ -158,4 +164,3 @@
   </div>
 </div>
 {% endblock %}
-
