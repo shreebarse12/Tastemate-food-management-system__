@@ -1,0 +1,135 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}My Profile - TasteMate{% endblock %}
+
+{% block content %}
+<style>
+    .profile-container {
+        padding: 3rem 0;
+        background: linear-gradient(135deg, #e0f7fa 0%, #f2f5f7 100%);
+        min-height: calc(100vh - 150px); /* Adjust based on navbar/footer height */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .profile-card {
+        background-color: #fff;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 600px;
+        overflow: hidden; /* Ensures child elements conform to border-radius */
+        animation: fadeInUp 0.8s ease-in-out;
+    }
+    
+    .profile-header {
+        background: #fff;
+        text-align: center;
+        padding: 2.5rem 1.5rem;
+        position: relative;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--primary-color, #007BFF);
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
+        margin-bottom: 1rem;
+    }
+    .profile-avatar-initials {
+        background-color: var(--primary-color, #007BFF);
+        color: #fff;
+        font-size: 3rem;
+    }
+
+    .profile-info h3 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 2rem;
+    }
+    .profile-info p {
+        margin: 0;
+        color: var(--text-light, #6c757d);
+        font-size: 1.1rem;
+    }
+
+    .profile-details .list-group-item {
+        border: none;
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: background-color 0.2s ease;
+    }
+    .profile-details .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+    .profile-details .icon {
+        color: var(--primary-color, #007BFF);
+        width: 24px;
+        flex-shrink: 0;
+    }
+    .profile-details strong {
+        color: var(--text-dark, #212529);
+    }
+    .profile-details .value {
+        margin-left: auto;
+        font-weight: 500;
+        color: var(--text-light, #6c757d);
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            {% if user.profile_image %}
+                <img src="{{ user.profile_image.url }}" alt="Profile" class="profile-avatar">
+            {% else %}
+                <div class="d-flex justify-content-center align-items-center profile-avatar profile-avatar-initials fw-bold mx-auto">
+                    {{ user.username|first|upper }}
+                </div>
+            {% endif %}
+            <div class="profile-info">
+                <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+                <p>@{{ user.username }}</p>
+            </div>
+        </div>
+        <div class="profile-details">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5l-8-5V6l8 5l8-5v2z"></path></svg>
+                    <strong>Email</strong>
+                    <span class="value">{{ user.email }}</span>
+                </li>
+                 {% if user.role == "STUDENT" and user.phone %}
+                <li class="list-group-item">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24c1.12.37 2.33.57 3.57.57c.55 0 1 .45 1 1V20c0 .55-.45 1-1 1c-9.39 0-17-7.61-17-17c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1c0 1.25.2 2.45.57 3.57c.11.35.03.74-.25 1.02l-2.2 2.2z"></path></svg>
+                    <strong>Phone</strong>
+                    <span class="value">{{ user.phone }}</span>
+                </li>
+                {% endif %}
+                <li class="list-group-item">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4s-4 1.79-4 4s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+                    <strong>Role</strong>
+                    <span class="value">{{ user.role|capfirst }}</span>
+                </li>
+            </ul>
+        </div>
+        <div class="card-footer bg-light text-center p-3">
+             <a href="#" class="btn btn-outline-primary rounded-pill px-4">Edit Profile</a>
+             <a href="{% url 'logout' %}" class="btn btn-danger rounded-pill px-4 ms-2">Logout</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

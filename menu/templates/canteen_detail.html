@@ -1,0 +1,318 @@
+{% extends "layout.html" %}
+{% block title %}{{ canteen.canteen_name|default:canteen.username }} - Full Menu{% endblock %}
+
+{% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap');
+
+    .menu-container {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding-top: 2rem;
+        padding-bottom: 4rem;
+        min-height: 85vh;
+    }
+
+    .canteen-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        animation: fadeInDown 0.8s ease-in-out;
+    }
+
+    .canteen-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: #343a40;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 0.5rem;
+    }
+    
+    .canteen-header h1::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background-color: #ff6f61;
+        border-radius: 2px;
+    }
+
+    .menu-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+        animation: fadeInUp 0.8s ease-in-out 0.2s;
+        animation-fill-mode: backwards;
+    }
+
+    .filter-btn {
+        background-color: #fff;
+        color: #343a40;
+        border: 2px solid #ddd;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+        background-color: #ff6f61;
+        color: #fff;
+        border-color: #ff6f61;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .search-bar {
+        max-width: 300px;
+        border: 2px solid #ddd;
+        border-radius: 50px;
+    }
+    .search-bar:focus {
+        border-color: #ff6f61;
+        box-shadow: 0 0 0 0.2rem rgba(255, 111, 97, 0.25);
+    }
+
+    .dish-card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        display: none; /* Initially hide all cards */
+    }
+
+    .dish-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .dish-card .card-img-container {
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .dish-card .card-img-top {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .dish-card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+
+    .dish-card .card-body {
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dish-card .card-title {
+        font-weight: 600;
+        color: #343a40;
+    }
+
+    .dish-card .dish-price {
+        color: #ff6f61;
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+    
+    .dish-section h3 {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    /* Animation for card appearance */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .dish-card.show {
+        display: block;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    /* Fallback for missing images */
+    img[alt]:after {
+        content: attr(alt);
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #eee;
+        color: #aaa;
+        font-weight: 600;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="menu-container">
+<div class="container">
+
+    <!-- Canteen Header -->
+    <div class="canteen-header">
+        <h1>{{ canteen.canteen_name|default:canteen.username }}</h1>
+        <p class="lead text-muted">Explore our delicious menu, crafted with care just for you.</p>
+    </div>
+
+    <!-- Dynamic Menu Controls -->
+    <div class="menu-controls">
+        <button class="btn filter-btn active" data-filter="all">All</button>
+        {% if breakfast %}<button class="btn filter-btn" data-filter="breakfast">🥞 Breakfast</button>{% endif %}
+        {% if lunch %}<button class="btn filter-btn" data-filter="lunch">🍛 Lunch</button>{% endif %}
+        {% if dinner %}<button class="btn filter-btn" data-filter="dinner">🌙 Dinner</button>{% endif %}
+        <input type="text" id="searchInput" class="form-control search-bar" placeholder="Search for a dish...">
+    </div>
+
+    <!-- Menu Sections -->
+    <div class="row">
+        <!-- Breakfast Section -->
+        {% if breakfast %}
+            {% for dish in breakfast %}
+            <div class="col-lg-4 col-md-6 mb-4 dish-item" data-category="breakfast" data-name="{{ dish.name|lower }}">
+                <div class="dish-card">
+                    <div class="card-img-container">
+                        <img src="{{ dish.image.url|default:'https://placehold.co/600x400/f8f9fa/ccc?text=No+Image' }}" class="card-img-top" alt="{{ dish.name }}">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ dish.name }}</h5>
+                        <p class="dish-price mb-2">₹{{ dish.price }}</p>
+                        <p class="card-text small text-muted flex-grow-1">{{ dish.description|truncatechars:80 }}</p>
+                        <p class="text-muted small mt-2 mb-2">Served: {{ dish.served_date|date:"M d" }}</p>
+                        <a href="{% url 'place_order' dish.id %}" class="btn btn-primary mt-auto">Order</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Lunch Section -->
+        {% if lunch %}
+            {% for dish in lunch %}
+            <div class="col-lg-4 col-md-6 mb-4 dish-item" data-category="lunch" data-name="{{ dish.name|lower }}">
+                <div class="dish-card">
+                    <div class="card-img-container">
+                        <img src="{{ dish.image.url|default:'https://placehold.co/600x400/f8f9fa/ccc?text=No+Image' }}" class="card-img-top" alt="{{ dish.name }}">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ dish.name }}</h5>
+                        <p class="dish-price mb-2">₹{{ dish.price }}</p>
+                        <p class="card-text small text-muted flex-grow-1">{{ dish.description|truncatechars:80 }}</p>
+                        <p class="text-muted small mt-2 mb-2">Served: {{ dish.served_date|date:"M d" }}</p>
+                        <a href="{% url 'place_order' dish.id %}" class="btn btn-primary mt-auto">Order</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Dinner Section -->
+        {% if dinner %}
+            {% for dish in dinner %}
+            <div class="col-lg-4 col-md-6 mb-4 dish-item" data-category="dinner" data-name="{{ dish.name|lower }}">
+                <div class="dish-card">
+                    <div class="card-img-container">
+                        <img src="{{ dish.image.url|default:'https://placehold.co/600x400/f8f9fa/ccc?text=No+Image' }}" class="card-img-top" alt="{{ dish.name }}">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ dish.name }}</h5>
+                        <p class="dish-price mb-2">₹{{ dish.price }}</p>
+                        <p class="card-text small text-muted flex-grow-1">{{ dish.description|truncatechars:80 }}</p>
+                        <p class="text-muted small mt-2 mb-2">Served: {{ dish.served_date|date:"M d" }}</p>
+                        <a href="{% url 'place_order' dish.id %}" class="btn btn-primary mt-auto">Order</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+        
+        <!-- No results message -->
+        <div id="no-results" class="col-12 text-center py-5" style="display: none;">
+            <p class="lead text-muted">No dishes found matching your criteria.</p>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const searchInput = document.getElementById('searchInput');
+    const dishItems = document.querySelectorAll('.dish-item');
+    const noResultsMessage = document.getElementById('no-results');
+    
+    // Initial display: show all items
+    filterDishes('all', '');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Manage active button state
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Filter based on category
+            const filterValue = this.getAttribute('data-filter');
+            filterDishes(filterValue, searchInput.value.toLowerCase());
+        });
+    });
+
+    searchInput.addEventListener('keyup', function() {
+        const activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+        const searchTerm = this.value.toLowerCase();
+        filterDishes(activeFilter, searchTerm);
+    });
+
+    function filterDishes(category, searchTerm) {
+        let itemsFound = false;
+        dishItems.forEach(item => {
+            const itemCategory = item.getAttribute('data-category');
+            const itemName = item.getAttribute('data-name');
+            
+            const categoryMatch = category === 'all' || itemCategory === category;
+            const searchMatch = itemName.includes(searchTerm);
+            
+            const card = item.querySelector('.dish-card');
+
+            if (categoryMatch && searchMatch) {
+                item.style.display = 'block';
+                card.classList.add('show');
+                itemsFound = true;
+            } else {
+                item.style.display = 'none';
+                card.classList.remove('show');
+            }
+        });
+        
+        // Show or hide the 'no results' message
+        noResultsMessage.style.display = itemsFound ? 'none' : 'block';
+    }
+});
+</script>
+{% endblock %}

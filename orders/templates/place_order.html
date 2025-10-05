@@ -1,0 +1,183 @@
+{% extends "layout.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Order: {{ dish.name }} - TasteMate{% endblock %}
+
+{% block content %}
+<style>
+    .place-order-container {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #e0f7fa 0%, #f2f5f7 100%);
+        height: 100%; 
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1rem;
+    }
+
+    .order-card {
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 800px;
+        overflow: hidden;
+        animation: fadeInUp 0.8s ease-in-out;
+    }
+    
+    .dish-image-section {
+        background-size: cover;
+        background-position: center;
+        min-height: 250px;
+    }
+
+    .order-form-section {
+        padding: 2.5rem;
+    }
+    .order-form-section h2 {
+        font-weight: 700;
+        color: var(--text-dark, #212529);
+    }
+    .order-form-section .dish-canteen {
+        font-weight: 500;
+        color: var(--text-light, #6c757d);
+    }
+    .order-form-section .dish-price {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--primary-color, #007BFF);
+    }
+    
+    .quantity-selector {
+        display: flex;
+        align-items: center;
+        border: 1px solid #ced4da;
+        border-radius: 10px;
+        overflow: hidden;
+        width: fit-content;
+    }
+    .quantity-selector button {
+        background-color: #f8f9fa;
+        border: none;
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-light, #6c757d);
+        transition: background-color 0.2s;
+    }
+    .quantity-selector button:hover {
+        background-color: #e9ecef;
+    }
+    .quantity-selector input {
+        width: 60px;
+        text-align: center;
+        border: none;
+        font-size: 1.2rem;
+        font-weight: 700;
+        padding: 0;
+    }
+    .quantity-selector input::-webkit-outer-spin-button,
+    .quantity-selector input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    .quantity-selector input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+    .total-price-section {
+        margin-top: 1.5rem;
+        font-weight: 700;
+        font-size: 1.8rem;
+    }
+
+    .pickup-time-section {
+        margin-top: 1.5rem;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="place-order-container">
+    <div class="order-card">
+        <div class="row g-0">
+            <!-- Left: Dish Image -->
+            <div class="col-md-6 dish-image-section" style="background-image: url('{{ dish.image.url|default:'https://placehold.co/800x800/e0f7fa/ccc?text=Dish' }}');">
+            </div>
+
+            <!-- Right: Order Form -->
+            <div class="col-md-6 order-form-section">
+                <h2 class="mb-1">{{ dish.name }}</h2>
+                <p class="dish-canteen">from {{ dish.canteen.canteen_name|default:dish.canteen.username }}</p>
+                <p class="dish-price">Price: ₹<span id="unit-price">{{ dish.price }}</span></p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label fw-bold">Quantity</label>
+                        <div class="quantity-selector">
+                            <button type="button" id="decrement-btn">-</button>
+                            <input type="number" name="quantity" id="quantity" class="form-control" min="1" value="1">
+                            <button type="button" id="increment-btn">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Pickup Time Section -->
+                    <div class="mb-3 pickup-time-section">
+                        <label for="pickup_time" class="form-label fw-bold">Select Pickup Time</label>
+                        <input type="datetime-local" name="pickup_time" id="pickup_time" class="form-control" required>
+                    </div>
+
+                    <div class="total-price-section">
+                        Total: ₹<span id="total-price">{{ dish.price }}</span>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill">Confirm and Place Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const quantityInput = document.getElementById('quantity');
+    const decrementBtn = document.getElementById('decrement-btn');
+    const incrementBtn = document.getElementById('increment-btn');
+    const unitPrice = parseFloat(document.getElementById('unit-price').textContent);
+    const totalPriceEl = document.getElementById('total-price');
+
+    function updateTotal() {
+        let quantity = parseInt(quantityInput.value, 10);
+        if (isNaN(quantity) || quantity < 1) {
+            quantity = 1;
+            quantityInput.value = 1;
+        }
+        const total = (quantity * unitPrice).toFixed(2);
+        totalPriceEl.textContent = total;
+    }
+
+    incrementBtn.addEventListener('click', function() {
+        quantityInput.value = parseInt(quantityInput.value, 10) + 1;
+        updateTotal();
+    });
+
+    decrementBtn.addEventListener('click', function() {
+        let currentQuantity = parseInt(quantityInput.value, 10);
+        if (currentQuantity > 1) {
+            quantityInput.value = currentQuantity - 1;
+            updateTotal();
+        }
+    });
+
+    quantityInput.addEventListener('input', updateTotal);
+});
+</script>
+{% endblock %}

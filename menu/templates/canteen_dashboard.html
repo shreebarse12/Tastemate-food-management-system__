@@ -1,0 +1,334 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Canteen Dashboard - TasteMate{% endblock %}
+
+{% block content %}
+<style>
+  .dashboard-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  /* Header Styling */
+  .dashboard-header {
+    margin-bottom: 2rem;
+  }
+  .dashboard-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+
+  /* Stat Cards */
+  .stat-card {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.07);
+    border: 1px solid #e9ecef;
+    text-align: center;
+    transition: all 0.3s ease;
+    height: 100%;
+  }
+  .stat-card-link:hover .stat-card {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.1);
+    border-color: var(--primary-color, #007BFF);
+  }
+  .stat-card .stat-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color, #007BFF);
+    margin-bottom: 0.5rem;
+  }
+  .stat-card .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+  .stat-card .stat-label {
+    font-size: 1rem;
+    color: var(--text-light, #6c757d);
+  }
+  
+  /* Section Title Styling */
+  .section-title {
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+  }
+
+  /* Meal Tabs Styling */
+  .nav-pills .nav-link {
+    border-radius: 50px;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+  }
+  .nav-pills .nav-link.active {
+    background-color: var(--primary-color, #007BFF);
+  }
+
+  /* Form Card Styling */
+  .form-card {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.07);
+    padding: 2rem;
+    position: sticky;
+    top: 100px; /* Adjust based on navbar height */
+  }
+
+  /* Student Order Card Styling (inside modal) */
+  .order-request-card {
+      background-color: #f8f9fa;
+      border-radius: 15px;
+      border: 1px solid #e9ecef;
+      margin-bottom: 1rem;
+      padding: 1.25rem;
+  }
+  .order-info .student-name { font-weight: 700; }
+  .order-info .dish-name { font-weight: 600; color: var(--text-dark, #212529); }
+  .order-info .order-meta { font-size: 0.9rem; color: var(--text-light, #6c757d); }
+  .order-actions .btn { border-radius: 50px; padding: 0.3rem 1rem; }
+
+  /* Dish Card Styling */
+  .dish-card {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    height: 100%;
+    border: 1px solid #e9ecef;
+  }
+  .dish-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  }
+  .veg-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
+  .veg-indicator.is-veg { background-color: #28a745; }
+  .veg-indicator.not-veg { background-color: #dc3545; }
+
+  /* UPDATED: All Menus Modal Card Styling */
+  .modal-dish-card {
+      display: flex;
+      align-items: center;
+      background-color: #f8f9fa;
+      border-radius: 10px;
+      padding: 0.75rem;
+      border: 1px solid #e9ecef;
+      gap: 1rem;
+  }
+  .modal-dish-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+  }
+  .modal-dish-info {
+      flex-grow: 1;
+  }
+  .modal-dish-info h6 {
+      margin: 0;
+      font-weight: 600;
+  }
+  .modal-dish-info p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--text-light, #6c757d);
+  }
+  .modal-dish-actions {
+      flex-shrink: 0;
+  }
+  .modal-dish-actions .btn {
+      padding: 0.3rem 0.8rem;
+  }
+
+</style>
+
+<div class="container dashboard-container">
+
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h1>Welcome, {{ request.user.canteen_name|default:request.user.username }}!</h1>
+    <p class="text-muted">Here's your dashboard for managing the menu on <strong>{{ served_date }}</strong>.</p>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-4">
+      <div class="stat-card">
+        <div class="stat-icon">🍽️</div>
+        <div class="stat-number">{{ dishes|length }}</div>
+        <div class="stat-label">Dishes on Today's Menu</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+       <!-- This now opens the "All My Menus" modal -->
+       <a href="#" data-bs-toggle="modal" data-bs-target="#allMenusModal" class="text-decoration-none stat-card-link">
+        <div class="stat-card">
+          <div class="stat-icon">📰</div>
+          <div class="stat-number" style="line-height: 1.2;">&nbsp;</div>
+          <div class="stat-label">View All My Menus</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-4">
+       <!-- This opens the "Student Orders" modal -->
+       <a href="#" data-bs-toggle="modal" data-bs-target="#studentOrdersModal" class="text-decoration-none stat-card-link">
+         <div class="stat-card">
+           <div class="stat-icon">📋</div>
+           <div class="stat-number">{{ student_orders|length }}</div>
+           <div class="stat-label">Pending Student Orders</div>
+         </div>
+       </a>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Left: Your Menu Items -->
+    <div class="col-lg-8">
+      <h4 class="section-title text-center">Your Menu Items for Today</h4>
+      <ul class="nav nav-pills mb-4 justify-content-center">
+        <li class="nav-item"><a class="nav-link {% if meal == 'breakfast' %}active{% endif %}" href="?meal=breakfast">🥞 Breakfast</a></li>
+        <li class="nav-item"><a class="nav-link {% if meal == 'lunch' %}active{% endif %}" href="?meal=lunch">🍛 Lunch</a></li>
+        <li class="nav-item"><a class="nav-link {% if meal == 'dinner' %}active{% endif %}" href="?meal=dinner">🌙 Dinner</a></li>
+      </ul>
+      <div class="row row-cols-1 row-cols-md-2 g-4">
+        {% for dish in dishes %}
+        <div class="col">
+          <div class="dish-card">
+            {% if dish.image %}<img src="{{ dish.image.url }}" class="card-img-top" alt="{{ dish.name }}" style="height:200px; object-fit:cover;">{% endif %}
+            <div class="card-body">
+              <h5 class="card-title fw-bold"><span class="veg-indicator {% if dish.is_veg %}is-veg{% else %}not-veg{% endif %}"></span>{{ dish.name }}</h5>
+              <p class="card-text text-muted">{{ dish.description|default:"No description provided."|truncatechars:60 }}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="dish-price">₹ {{ dish.price }}</div>
+                {% if not dish.available %}<span class="badge bg-secondary">Unavailable</span>{% endif %}
+              </div>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0 pb-3 dish-actions">
+                <a href="{% url 'edit_dish' dish.id %}" class="btn btn-sm btn-outline-primary px-3">Edit</a>
+                <form method="post" action="{% url 'delete_dish' dish.id %}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this dish?');">
+                  {% csrf_token %}
+                  <button class="btn btn-sm btn-outline-danger px-3" type="submit">Delete</button>
+                </form>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+          <div class="alert alert-light text-center">You haven't added any dishes for {{ meal }} on this date yet.</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    
+    <!-- Right: Add Dish Form -->
+    <div class="col-lg-4 mb-4">
+      <div class="form-card">
+        <h4 class="section-title">Add a New Dish</h4>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="mb-3">
+              {{ field.label_tag }}
+              {% if field.name == 'is_veg' or field.name == 'available' %}
+                <div class="form-check form-switch mt-1">
+                  {% render_field field class="form-check-input" %}
+                  <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.help_text }}</label>
+                </div>
+              {% else %}
+                {% render_field field class="form-control" %}
+              {% endif %}
+              {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+            </div>
+          {% endfor %}
+          <div class="d-grid mt-4">
+            <button class="btn btn-primary btn-lg" type="submit">Save Dish</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Student Orders Modal -->
+<div class="modal fade" id="studentOrdersModal" tabindex="-1" aria-labelledby="studentOrdersModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content" style="border-radius: 15px;">
+      <div class="modal-header">
+        <h5 class="modal-title section-title" id="studentOrdersModalLabel">Student Order Requests</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% for order in student_orders %}
+          <div class="order-request-card">
+            <div class="d-flex align-items-center">
+              <div class="order-info flex-grow-1">
+                <div class="mb-1"><span class="student-name">{{ order.student.username }}</span> ordered <span class="dish-name">{{ order.dish.name }}</span></div>
+                <div class="order-meta">Qty: {{ order.quantity }} • Total: ₹{{ order.total_price }} • {{ order.ordered_at|date:"M d, h:i A" }}</div>
+              </div>
+              <div class="order-actions">
+                {% if order.status == 'pending' %}
+                  <form action="{% url 'update_order_status' order.id 'accepted' %}" method="post" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-success btn-sm">Accept</button></form>
+                  <form action="{% url 'update_order_status' order.id 'rejected' %}" method="post" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-danger btn-sm">Reject</button></form>
+                {% else %}<span class="badge bg-light text-dark">{{ order.get_status_display }}</span>{% endif %}
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="alert alert-light text-center">You have no pending student orders.</div>
+        {% endfor %}
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- All Menus Modal -->
+<div class="modal fade" id="allMenusModal" tabindex="-1" aria-labelledby="allMenusModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content" style="border-radius: 15px;">
+      <div class="modal-header">
+        <h5 class="modal-title section-title" id="allMenusModalLabel">All Your Published Menus</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% for date, dishes_on_date in all_canteen_menus_by_date.items %}
+            <div class="mb-4">
+                <h6 class="fw-bold mb-3 p-2 bg-light rounded">{{ date|date:"F d, Y" }}</h6>
+                <div class="row g-3">
+                    {% for dish in dishes_on_date %}
+                        <div class="col-12">
+                            <div class="modal-dish-card">
+                                <img src="{{ dish.image.url|default:'https://placehold.co/120x120/e0f7fa/ccc?text=Dish' }}" class="modal-dish-img" alt="{{ dish.name }}">
+                                <div class="modal-dish-info">
+                                    <h6>
+                                        <span class="veg-indicator {% if dish.is_veg %}is-veg{% else %}not-veg{% endif %}"></span>
+                                        {{ dish.name }}
+                                    </h6>
+                                    <p>{{ dish.get_meal_type_display }} • ₹{{ dish.price }}</p>
+                                </div>
+                                <div class="modal-dish-actions">
+                                    <a href="{% url 'edit_dish' dish.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                    <form method="post" action="{% url 'delete_dish' dish.id %}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this dish from your menu?');">
+                                      {% csrf_token %}
+                                      <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="alert alert-light text-center">You have not published any menus yet.</div>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

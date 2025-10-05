@@ -1,0 +1,287 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Welcome to TasteMate - Your Campus Food Companion{% endblock %}
+
+{% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+    /* NEW LIGHT THEME */
+    :root {
+      --primary-color: #007BFF; /* A clean, professional blue */
+      --secondary-color: #6c757d;
+      --background-light: #ffffff;
+      --background-offwhite: #f8f9fa;
+      --text-dark: #212529;
+      --text-light: #6c757d;
+    }
+
+    /* General Body Style */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--background-offwhite);
+    }
+
+    /* Hero Section - Light & Airy with Food Animations */
+    .hero-section {
+        background: linear-gradient(135deg, #e0f7fa 0%, #d1e5f0 100%);
+        padding: 120px 20px;
+        color: var(--text-dark);
+        text-align: center;
+        position: relative;
+        overflow: hidden; /* Important for containing the food icons */
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2; /* Keep content above the food icons */
+    }
+
+    .hero-section h1 {
+        font-size: 3.8rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        animation: slideInDown 1s ease-in-out;
+    }
+
+    .hero-section p.lead {
+        font-size: 1.2rem;
+        margin-bottom: 40px;
+        font-weight: 300;
+        max-width: 650px;
+        margin-left: auto;
+        margin-right: auto;
+        color: var(--text-light);
+        animation: slideInUp 1s ease-in-out;
+    }
+
+    .hero-section .btn {
+        padding: 14px 35px;
+        font-size: 1.1rem;
+        border-radius: 50px;
+        transition: all 0.3s ease-in-out;
+        font-weight: 600;
+        border: 2px solid transparent;
+        box-shadow: 0 5px 20px rgba(0, 123, 255, 0.15);
+    }
+    
+    .hero-section .btn-primary {
+        background-color: var(--primary-color);
+        color: #fff;
+    }
+    .hero-section .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.25);
+    }
+    .hero-section .btn-outline-primary {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+    .hero-section .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: #fff;
+        transform: translateY(-3px);
+    }
+    
+    .login-prompt {
+        margin-top: 2.5rem;
+        color: var(--text-light);
+    }
+    .login-prompt a {
+        color: var(--primary-color);
+        font-weight: 600;
+        text-decoration: none;
+        border-bottom: 1px solid;
+    }
+    .login-prompt a:hover { text-decoration: underline; }
+
+    /* NEW: Floating Food Image Styles */
+    .food-icon {
+        position: absolute;
+        display: block;
+        z-index: 1;
+        opacity: 0.2; /* Slightly increased opacity for images */
+        animation: float-food 20s infinite linear;
+    }
+    .food-icon img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%; /* Makes the images circular */
+        object-fit: cover;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    /* Individual icon positions and animation delays */
+    .food-icon-1 { width: 150px; height: 150px; top: 10%; left: 15%; animation-duration: 25s; }
+    .food-icon-2 { width: 80px; height: 80px; top: 20%; right: 10%; animation-duration: 18s; animation-delay: -5s; }
+    .food-icon-3 { width: 100px; height: 100px; bottom: 15%; left: 25%; animation-duration: 22s; animation-delay: -10s; }
+    .food-icon-4 { width: 120px; height: 120px; bottom: 25%; right: 20%; animation-duration: 30s; animation-delay: -2s; }
+
+    /* Floating Animation Keyframes */
+    @keyframes float-food {
+        0% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-25px) rotate(15deg); opacity: 0.25; }
+        100% { transform: translateY(0px) rotate(0deg); }
+    }
+    
+    /* Other sections remain the same */
+    .section { padding: 80px 20px; }
+    .section-title { text-align: center; margin-bottom: 60px; font-weight: 700; font-size: 2.8rem; color: var(--text-dark); }
+    .section-title span { color: var(--primary-color); }
+    .feature-card { text-align: center; padding: 35px; border: 1px solid #e9ecef; border-radius: 15px; transition: all 0.3s ease; background-color: var(--background-light); height: 100%; }
+    .feature-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.08); border-color: var(--primary-color); }
+    .feature-icon { width: 70px; height: 70px; margin: 0 auto 25px; background: var(--primary-color); color: #fff; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 8px 15px rgba(0, 123, 255, 0.2); }
+    .feature-card h3 { font-weight: 600; margin-bottom: 15px; font-size: 1.3rem; }
+    .feature-card p { color: var(--text-light); font-size: 0.95rem; }
+    .how-it-works-section { background-color: var(--background-light); }
+    .step-link { text-decoration: none; color: inherit; display: block; height: 100%; }
+    .step-card { text-align: center; position: relative; padding: 35px; border: 1px solid #e9ecef; border-radius: 15px; background-color: var(--background-light); height: 100%; transition: all 0.3s ease; }
+    .step-link:hover .step-card { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.08); border-color: var(--primary-color); }
+    .step-number { width: 60px; height: 60px; margin: 0 auto 20px; border: 2px solid var(--primary-color); color: var(--primary-color); background-color: #fff; border-radius: 50%; font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+    .step-link:hover .step-number { background-color: var(--primary-color); color: #fff; }
+    .step-card h3 { font-weight: 600; margin-bottom: 10px; }
+    .step-card p { color: var(--text-light); max-width: 300px; margin: 0 auto; }
+    .cta-section { background: var(--background-light); color: var(--text-dark); text-align: center; padding: 80px 20px; }
+    .cta-section h2 { font-weight: 700; font-size: 2.5rem; }
+    .cta-section .btn-cta { background-color: var(--primary-color); color: #fff; padding: 14px 35px; font-weight: 600; border-radius: 50px; transition: all 0.3s ease; }
+    .cta-section .btn-cta:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0, 123, 255, 0.25); }
+    .reveal { opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @keyframes slideInDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes slideInUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <!-- Animated food images in the background -->
+    <div class="food-icon food-icon-1">
+        <img src="https://placehold.co/300x300/ffffff/cccccc?text=Indian+Thali" alt="Floating image of a rice thali">
+    </div>
+    <div class="food-icon food-icon-2">
+       <img src="https://placehold.co/160x160/ffffff/cccccc?text=Samosa" alt="Floating image of a samosa">
+    </div>
+    <div class="food-icon food-icon-3">
+        <img src="https://placehold.co/200x200/ffffff/cccccc?text=Dosa" alt="Floating image of a dosa">
+    </div>
+    <div class="food-icon food-icon-4">
+        <img src="https://placehold.co/240x240/ffffff/cccccc?text=Chai" alt="Floating image of a cup of tea">
+    </div>
+
+    <div class="hero-content">
+        <h1 id="welcomeMessage">Good Afternoon! Welcome to TasteMate</h1>
+        <p class="lead">Your ultimate guide to discovering the best campus canteen meals, right at your fingertips!</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="{% url 'register_student' %}" class="btn btn-primary btn-lg">I'm a Student</a>
+            <a href="{% url 'register_canteen' %}" class="btn btn-outline-primary btn-lg">I'm a Canteen</a>
+        </div>
+        <div class="login-prompt">
+            <p>Already have an account? <a href="{% url 'login_view' %}">Login Here</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="section features-section">
+    <div class="container">
+        <h2 class="section-title reveal">Why You'll <span>Love</span> TasteMate</h2>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-6 col-lg-4 reveal">
+                <div class="feature-card">
+                    <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14z"></path></svg></div>
+                    <h3>Explore Menus</h3>
+                    <p>Easily browse through the full menus of all registered canteens. Find your favorite meals in seconds.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 reveal">
+                <div class="feature-card">
+                    <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5.5A3.5 3.5 0 0 1 15.5 9a3.5 3.5 0 0 1-3.5 3.5A3.5 3.5 0 0 1 8.5 9A3.5 3.5 0 0 1 12 5.5M5 8c0-3.9 3.1-7 7-7s7 3.1 7 7c0 1.5-.5 2.9-1.3 4c-2.4 3.5-5.7 7.6-5.7 7.6s-3.3-4.1-5.7-7.6C5.5 10.9 5 9.5 5 8z"></path></svg></div>
+                    <h3>Discover Nearby</h3>
+                    <p>Find canteens located conveniently on your campus. Never wonder where to eat again.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 reveal">
+                <div class="feature-card">
+                    <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg></div>
+                    <h3>Real-Time Info</h3>
+                    <p>Canteens update their menus and availability, ensuring you always have the latest dish information.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="section how-it-works-section">
+    <div class="container">
+        <h2 class="section-title reveal">Get Started in <span>3 Easy Steps</span></h2>
+        <div class="row g-4">
+            <div class="col-md-4 reveal">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Sign Up</h3>
+                    <p>Create your student account in less than a minute. It's fast, free, and easy.</p>
+                </div>
+            </div>
+            <div class="col-md-4 reveal">
+                <a href="{% url 'public_menu' %}" class="step-link">
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h3>Browse Canteens</h3>
+                        <p>Explore all the canteens on campus. Filter by location, cuisine, or what's popular.</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 reveal">
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Enjoy Your Meal</h3>
+                    <p>Find what you're craving, head to the canteen, and enjoy a delicious meal.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="cta-section reveal">
+    <div class="container">
+        <h2 class="mb-4">Ready to Find Your Next Favorite Meal?</h2>
+        <p class="lead mb-4" style="max-width: 600px; margin: 0 auto;">Join the TasteMate community today and simplify your campus dining experience.</p>
+        <a href="{% url 'register_student' %}" class="btn btn-cta btn-lg mt-3">Sign Up for Free</a>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Dynamic Welcome Message
+    const welcomeMessage = document.getElementById('welcomeMessage');
+    const hour = new Date().getHours();
+    let greeting = "Welcome!";
+    if (hour < 12) {
+        greeting = "Good Morning!";
+    } else if (hour < 18) {
+        greeting = "Good Afternoon!";
+    } else {
+        greeting = "Good Evening!";
+    }
+    welcomeMessage.innerHTML = `${greeting} Welcome to TasteMate`;
+
+
+    // Scroll Animation Logic
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealOnScroll = () => {
+        const windowHeight = window.innerHeight;
+        revealElements.forEach(el => {
+            const elementTop = el.getBoundingClientRect().top;
+            const elementVisible = 100; // Distance from bottom of viewport to trigger
+            if (elementTop < windowHeight - elementVisible) {
+                el.classList.add('visible');
+            }
+        });
+    };
+    window.addEventListener('scroll', revealOnScroll);
+    revealOnScroll(); // Initial check
+});
+</script>
+{% endblock %}
+
