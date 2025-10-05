@@ -15,7 +15,7 @@
     
     <style>
         :root {
-            --primary-color: #007BFF;
+            --primary-color: #e63946;
             --text-dark: #212529;
             --text-light: #6c757d;
             --background-offwhite: #f8f9fa;
@@ -71,6 +71,24 @@
         }
         .dropdown-item.text-danger {
             font-weight: 600;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-primary:hover {
+            background-color: #c92a3b;
+            border-color: #c92a3b;
+        }
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #fff;
         }
 
         footer {
@@ -142,8 +160,7 @@
 
     <!-- Main Content -->
     <main class="flex-grow-1">
-        {% block content %}{% endblock %}
-    </main>
+        {% block content %}{% endblock %}</main>
 
     <!-- Footer -->
     <footer class="text-center mt-auto">

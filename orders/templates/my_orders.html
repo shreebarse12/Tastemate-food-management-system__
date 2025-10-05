@@ -52,7 +52,7 @@
         margin-bottom: 0.25rem;
     }
     .order-card .price-quantity {
-        color: var(--text-light, #6c757d);
+        color: #6c757d;
         margin-bottom: 0.25rem;
     }
     .order-card .order-time {
@@ -91,6 +91,15 @@
         color: #e0e0e0;
         margin-bottom: 1rem;
     }
+
+    .empty-state .btn-primary {
+        background-color: #e63946;
+        border-color: #e63946;
+    }
+    .empty-state .btn-primary:hover {
+        background-color: #c92a3b;
+        border-color: #c92a3b;
+    }
 </style>
 
 <div class="orders-container">
@@ -104,7 +113,7 @@
             <div class="orders-list">
                 {% for order in orders %}
                 <div class="order-card">
-                    <img src="{{ order.dish.image.url|default:'https://placehold.co/160x160/e0f7fa/ccc?text=Dish' }}" class="dish-image" alt="{{ order.dish.name }}">
+                    <img src="{{ order.dish.image.url|default:'https://placehold.co/160x160/fdeaea/ccc?text=Dish' }}" class="dish-image" alt="{{ order.dish.name }}">
                     
                     <div class="order-details">
                         <h5 class="dish-name">{{ order.dish.name }}</h5>

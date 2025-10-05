@@ -33,11 +33,11 @@
   .stat-card-link:hover .stat-card {
     transform: translateY(-5px);
     box-shadow: 0 12px 35px rgba(0,0,0,0.1);
-    border-color: var(--primary-color, #007BFF);
+    border-color: #e63946;
   }
   .stat-card .stat-icon {
     font-size: 2.5rem;
-    color: var(--primary-color, #007BFF);
+    color: #e63946;
     margin-bottom: 0.5rem;
   }
   .stat-card .stat-number {
@@ -46,7 +46,7 @@
   }
   .stat-card .stat-label {
     font-size: 1rem;
-    color: var(--text-light, #6c757d);
+    color: #6c757d;
   }
   
   /* Section Title Styling */
@@ -62,7 +62,7 @@
     padding: 0.75rem 1.5rem;
   }
   .nav-pills .nav-link.active {
-    background-color: var(--primary-color, #007BFF);
+    background-color: #e63946;
   }
 
   /* Form Card Styling */
@@ -75,6 +75,15 @@
     top: 100px; /* Adjust based on navbar height */
   }
 
+  .form-card .btn-primary {
+    background-color: #e63946;
+    border: none;
+  }
+
+  .form-card .btn-primary:hover {
+    background-color: #c92a3b;
+  }
+
   /* Student Order Card Styling (inside modal) */
   .order-request-card {
       background-color: #f8f9fa;
@@ -84,8 +93,8 @@
       padding: 1.25rem;
   }
   .order-info .student-name { font-weight: 700; }
-  .order-info .dish-name { font-weight: 600; color: var(--text-dark, #212529); }
-  .order-info .order-meta { font-size: 0.9rem; color: var(--text-light, #6c757d); }
+  .order-info .dish-name { font-weight: 600; color: #212529; }
+  .order-info .order-meta { font-size: 0.9rem; color: #6c757d; }
   .order-actions .btn { border-radius: 50px; padding: 0.3rem 1rem; }
 
   /* Dish Card Styling */
@@ -132,7 +141,7 @@
   .modal-dish-info p {
       margin: 0;
       font-size: 0.9rem;
-      color: var(--text-light, #6c757d);
+      color: #6c757d;
   }
   .modal-dish-actions {
       flex-shrink: 0;
@@ -300,7 +309,7 @@
                     {% for dish in dishes_on_date %}
                         <div class="col-12">
                             <div class="modal-dish-card">
-                                <img src="{{ dish.image.url|default:'https://placehold.co/120x120/e0f7fa/ccc?text=Dish' }}" class="modal-dish-img" alt="{{ dish.name }}">
+                                <img src="{{ dish.image.url|default:'https://placehold.co/120x120/fdeaea/ccc?text=Dish' }}" class="modal-dish-img" alt="{{ dish.name }}">
                                 <div class="modal-dish-info">
                                     <h6>
                                         <span class="veg-indicator {% if dish.is_veg %}is-veg{% else %}not-veg{% endif %}"></span>
@@ -331,4 +340,3 @@
   </div>
 </div>
 {% endblock %}
-

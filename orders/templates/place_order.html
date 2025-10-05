@@ -7,7 +7,7 @@
 <style>
     .place-order-container {
         font-family: 'Poppins', sans-serif;
-        background: linear-gradient(135deg, #e0f7fa 0%, #f2f5f7 100%);
+        background: linear-gradient(135deg, #fdeaea 0%, #ffecec 100%);
         height: 100%; 
         width: 100%;
         display: flex;
@@ -37,16 +37,16 @@
     }
     .order-form-section h2 {
         font-weight: 700;
-        color: var(--text-dark, #212529);
+        color: #212529;
     }
     .order-form-section .dish-canteen {
         font-weight: 500;
-        color: var(--text-light, #6c757d);
+        color: #6c757d;
     }
     .order-form-section .dish-price {
         font-size: 1.2rem;
         font-weight: 600;
-        color: var(--primary-color, #007BFF);
+        color: #e63946;
     }
     
     .quantity-selector {
@@ -64,7 +64,7 @@
         height: 40px;
         font-size: 1.5rem;
         font-weight: 600;
-        color: var(--text-light, #6c757d);
+        color: #6c757d;
         transition: background-color 0.2s;
     }
     .quantity-selector button:hover {
@@ -97,6 +97,26 @@
         margin-top: 1.5rem;
     }
 
+    .order-form-section .form-control {
+        border-radius: 10px;
+        padding: 12px;
+        border: 1px solid #ced4da;
+    }
+
+    .order-form-section .form-control:focus {
+        border-color: #e63946;
+        box-shadow: 0 0 0 0.25rem rgba(230, 57, 70, 0.25);
+    }
+
+    .order-form-section .btn-primary {
+        background-color: #e63946;
+        border: none;
+    }
+
+    .order-form-section .btn-primary:hover {
+        background-color: #c92a3b;
+    }
+
     @keyframes fadeInUp {
         from { opacity: 0; transform: translateY(30px); }
         to { opacity: 1; transform: translateY(0); }
@@ -107,7 +127,7 @@
     <div class="order-card">
         <div class="row g-0">
             <!-- Left: Dish Image -->
-            <div class="col-md-6 dish-image-section" style="background-image: url('{{ dish.image.url|default:'https://placehold.co/800x800/e0f7fa/ccc?text=Dish' }}');">
+            <div class="col-md-6 dish-image-section" style="background-image: url('{{ dish.image.url|default:'https://placehold.co/800x800/fdeaea/ccc?text=Dish' }}');">
             </div>
 
             <!-- Right: Order Form -->

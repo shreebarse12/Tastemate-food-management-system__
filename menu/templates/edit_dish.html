@@ -8,7 +8,7 @@
   /* Dedicated container for the edit page, themed to match */
   .edit-dish-container {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #e0f7fa 0%, #d1e5f0 100%);
+    background: linear-gradient(135deg, #fdeaea 0%, #ffecec 100%);
     /* This makes the container fill 100% of its parent's (the <main> tag) height */
     height: 100%; 
     width: 100%;
@@ -33,7 +33,7 @@
   }
 
   .edit-dish-container .card-header {
-    background-color: var(--primary-color, #007BFF);
+    background-color: #e63946;
     color: #fff;
     font-weight: 700;
     border-top-left-radius: 20px;
@@ -43,7 +43,7 @@
   
   .edit-dish-container .form-label {
     font-weight: 600;
-    color: var(--text-dark, #212529);
+    color: #212529;
   }
   
   .edit-dish-container .form-control, .edit-dish-container .form-select {
@@ -53,8 +53,17 @@
   }
 
   .edit-dish-container .form-control:focus, .edit-dish-container .form-select:focus {
-      border-color: var(--primary-color, #007BFF);
-      box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+      border-color: #e63946;
+      box-shadow: 0 0 0 0.25rem rgba(230, 57, 70, 0.25);
+  }
+
+  .edit-dish-container .btn-primary {
+    background-color: #e63946;
+    border: none;
+  }
+
+  .edit-dish-container .btn-primary:hover {
+    background-color: #c92a3b;
   }
 
   @keyframes fadeInUp {

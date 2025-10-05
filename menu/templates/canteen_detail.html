@@ -6,7 +6,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap');
 
     .menu-container {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        background: linear-gradient(135deg, #fdeaea 0%, #ffecec 100%);
         padding-top: 2rem;
         padding-bottom: 4rem;
         min-height: 85vh;
@@ -36,7 +36,7 @@
         transform: translateX(-50%);
         width: 80px;
         height: 4px;
-        background-color: #ff6f61;
+        background-color: #e63946;
         border-radius: 2px;
     }
 
@@ -62,9 +62,9 @@
     }
 
     .filter-btn:hover, .filter-btn.active {
-        background-color: #ff6f61;
+        background-color: #e63946;
         color: #fff;
-        border-color: #ff6f61;
+        border-color: #e63946;
         transform: translateY(-2px);
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
@@ -75,8 +75,8 @@
         border-radius: 50px;
     }
     .search-bar:focus {
-        border-color: #ff6f61;
-        box-shadow: 0 0 0 0.2rem rgba(255, 111, 97, 0.25);
+        border-color: #e63946;
+        box-shadow: 0 0 0 0.2rem rgba(230, 57, 70, 0.25);
     }
 
     .dish-card {
@@ -121,9 +121,18 @@
     }
 
     .dish-card .dish-price {
-        color: #ff6f61;
+        color: #e63946;
         font-size: 1.2rem;
         font-weight: 700;
+    }
+
+    .dish-card .btn-primary {
+        background-color: #e63946;
+        border: none;
+    }
+
+    .dish-card .btn-primary:hover {
+        background-color: #c92a3b;
     }
     
     .dish-section h3 {
@@ -199,7 +208,7 @@
             <div class="col-lg-4 col-md-6 mb-4 dish-item" data-category="breakfast" data-name="{{ dish.name|lower }}">
                 <div class="dish-card">
                     <div class="card-img-container">
-                        <img src="{{ dish.image.url|default:'https://placehold.co/600x400/f8f9fa/ccc?text=No+Image' }}" class="card-img-top" alt="{{ dish.name }}">
+                        <img src="{{ dish.image.url|default:'https://placehold.co/600x400/fdeaea/ccc?text=No+Image' }}" class="card-img-top" alt="{{ dish.name }}">
                     </div>
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ dish.name }}</h5>
@@ -219,7 +228,7 @@
             <div class="col-lg-4 col-md-6 mb-4 dish-item" data-category="lunch" data-name="{{ dish.name|lower }}">
                 <div class="dish-card">
                     <div class="card-img-container">
-                        <img src="{{ dish.image.url|default:'https://placehold.co/600x400/f8f9fa/ccc?text=No+Image' }}" class="card-img-top" alt="{{ dish.name }}">
+                        <img src="{{ dish.image.url|default:'https://placehold.co/600x400/fdeaea/ccc?text=No+Image' }}" class="card-img-top" alt="{{ dish.name }}">
                     </div>
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ dish.name }}</h5>
@@ -239,7 +248,7 @@
             <div class="col-lg-4 col-md-6 mb-4 dish-item" data-category="dinner" data-name="{{ dish.name|lower }}">
                 <div class="dish-card">
                     <div class="card-img-container">
-                        <img src="{{ dish.image.url|default:'https://placehold.co/600x400/f8f9fa/ccc?text=No+Image' }}" class="card-img-top" alt="{{ dish.name }}">
+                        <img src="{{ dish.image.url|default:'https://placehold.co/600x400/fdeaea/ccc?text=No+Image' }}" class="card-img-top" alt="{{ dish.name }}">
                     </div>
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ dish.name }}</h5>
