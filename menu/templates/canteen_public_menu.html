@@ -1,0 +1,244 @@
+{% extends "layout.html" %}
+{% block title %}Available Canteens - TasteMate{% endblock %}
+
+{% block content %}
+<style>
+  .content-wrapper {
+    background-color: #fff; /* Changed to white for a cleaner look */
+  }
+
+  /* NEW: Hero Section inspired by the reference image */
+  .menus-hero {
+    background-color: #fff;
+    padding: 80px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden; /* Hide parts of images that go off-screen */
+  }
+  .hero-background-image {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 40%; /* Adjust width of side images */
+    object-fit: cover;
+    opacity: 0.9;
+  }
+  .hero-bg-left { left: 0; }
+  .hero-bg-right { right: 0; }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+  }
+  .hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+  }
+  .hero-content p {
+    font-size: 1.2rem;
+    color: var(--text-light, #6c757d);
+    max-width: 500px;
+    margin: 1rem auto 2rem auto;
+  }
+
+  .search-controls {
+    max-width: 700px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  }
+  .search-bar {
+    border-radius: 50px !important;
+    padding: 0.8rem 1.5rem;
+    border: 2px solid #e9ecef;
+  }
+  .search-bar:focus {
+      border-color: var(--primary-color, #007BFF);
+      box-shadow: none;
+  }
+
+  /* NEW: Top Canteens Section */
+  .top-canteens-section {
+    padding: 60px 20px;
+    background-color: #f8f9fa;
+  }
+  .section-title {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+  .canteen-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+  .canteen-gallery-item {
+    text-decoration: none;
+    color: var(--text-dark);
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  .canteen-gallery-item:hover {
+    transform: translateY(-5px);
+  }
+  .canteen-gallery-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 15px;
+    object-fit: cover;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    margin-bottom: 0.75rem;
+  }
+  .canteen-gallery-name {
+    font-weight: 600;
+  }
+
+  /* Main Canteen List Styling */
+  .canteen-list-section {
+    padding: 60px 20px;
+  }
+  .canteen-card-link { text-decoration: none; color: inherit; }
+  .canteen-showcase-card {
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .canteen-card-link:hover .canteen-showcase-card {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color, #007BFF);
+  }
+  .canteen-showcase-card .card-img-top { height: 180px; object-fit: cover; }
+  .canteen-showcase-card .card-body { padding: 1.25rem; }
+  .canteen-showcase-card .card-title { font-weight: 700; margin-bottom: 0.25rem; }
+  .canteen-showcase-card .canteen-address { color: var(--text-light, #6c757d); font-size: 0.9rem; margin-bottom: 1rem; }
+  .popular-dishes-title { font-weight: 600; font-size: 0.9rem; color: var(--text-dark); margin-bottom: 0.5rem; }
+  .dish-avatars { display: flex; align-items: center; }
+  .dish-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; margin-left: -12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+  .dish-avatar:first-child { margin-left: 0; }
+  .canteen-showcase-card .card-footer { background-color: #f8f9fa; text-align: center; font-weight: 600; color: var(--primary-color, #007BFF); padding: 0.75rem; transition: all 0.3s ease; margin-top: auto; }
+  .canteen-card-link:hover .card-footer { background-color: var(--primary-color, #007BFF); color: #fff; }
+
+  /* Scroll Animation Styling */
+  .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .empty-state { text-align: center; padding: 4rem 1rem; background-color: #fff; border-radius: 15px; }
+  #no-results { display: none; }
+</style>
+
+<div class="content-wrapper">
+  <!-- Hero Section -->
+  <div class="menus-hero">
+    <img src="https://placehold.co/800x600/E0F7FA/FFFFFF?text=Delicious+Food" class="hero-background-image hero-bg-left" alt="Background image of a salad">
+    <img src="https://placehold.co/800x600/FFCDD2/FFFFFF?text=Tasty+Meals" class="hero-background-image hero-bg-right" alt="Background image of a pizza">
+    <div class="hero-content">
+      <h1>We Are In The Business Of Food</h1>
+      <p>Your one-stop platform to explore the best canteen meals around you!</p>
+      <div class="search-controls">
+        <input type="text" id="searchInput" class="form-control search-bar" placeholder="Enter canteen name or food item...">
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Canteens Section -->
+  <div class="top-canteens-section">
+    <div class="container">
+      <h2 class="section-title">Top Canteens</h2>
+      <div class="canteen-gallery">
+        {% for menu in canteen_menus|slice:":8" %}
+          <a href="{% url 'canteen_detail' menu.canteen.id %}" class="canteen-gallery-item">
+            {% with first_dish=menu.breakfast.first|default:menu.lunch.first|default:menu.dinner.first %}
+              <img src="{{ first_dish.image.url|default:'https://placehold.co/240x240/e0f7fa/ccc?text=TasteMate' }}" class="canteen-gallery-img" alt="{{ menu.canteen.canteen_name }}">
+            {% endwith %}
+            <span class="canteen-gallery-name">{{ menu.canteen.canteen_name|default:menu.canteen.username }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Canteen List Section -->
+  <div class="canteen-list-section">
+    <div class="container">
+      <h2 class="section-title">Choose From Our Canteens</h2>
+      <div id="canteen-list" class="row g-4">
+        {% for menu in canteen_menus %}
+          <div class="col-lg-4 col-md-6 canteen-item reveal" data-canteen-name="{{ menu.canteen.canteen_name|default:menu.canteen.username|lower }}">
+            <a href="{% url 'canteen_detail' menu.canteen.id %}" class="canteen-card-link">
+              <div class="canteen-showcase-card">
+                {% with first_dish=menu.breakfast.first|default:menu.lunch.first|default:menu.dinner.first %}
+                  <img src="{{ first_dish.image.url|default:'https://placehold.co/600x360/e0f7fa/ccc?text=TasteMate' }}" class="card-img-top" alt="{{ menu.canteen.canteen_name }}">
+                {% endwith %}
+                <div class="card-body">
+                  <h5 class="card-title">{{ menu.canteen.canteen_name|default:menu.canteen.username }}</h5>
+                  <p class="canteen-address">{{ menu.canteen.address|truncatechars:40 }}</p>
+                  <p class="popular-dishes-title">Popular Items</p>
+                  <div class="dish-avatars">
+                    {% for dish in menu.breakfast|slice:":2" %}<img src="{{ dish.image.url|default:'https://placehold.co/80x80/ffffff/ccc?text=B' }}" class="dish-avatar" title="{{ dish.name }}">{% endfor %}
+                    {% for dish in menu.lunch|slice:":2" %}<img src="{{ dish.image.url|default:'https://placehold.co/80x80/ffffff/ccc?text=L' }}" class="dish-avatar" title="{{ dish.name }}">{% endfor %}
+                    {% for dish in menu.dinner|slice:":1" %}<img src="{{ dish.image.url|default:'https://placehold.co/80x80/ffffff/ccc?text=D' }}" class="dish-avatar" title="{{ dish.name }}">{% endfor %}
+                  </div>
+                </div>
+                <div class="card-footer">View Menu &rarr;</div>
+              </div>
+            </a>
+          </div>
+        {% empty %}
+          <div class="col-12"><div class="empty-state"><p class="lead text-muted">No canteens have posted menus yet.</p></div></div>
+        {% endfor %}
+      </div>
+       <div id="no-results" class="empty-state mt-4" style="display: none;">
+          <p class="lead text-muted">No canteens found matching your search.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const canteenItems = document.querySelectorAll('.canteen-item');
+    const noResultsMessage = document.getElementById('no-results');
+
+    function performSearch() {
+        const searchTerm = searchInput.value.toLowerCase();
+        let totalCanteensFound = 0;
+        canteenItems.forEach(canteen => {
+            const canteenName = canteen.getAttribute('data-canteen-name').toLowerCase();
+            if (canteenName.includes(searchTerm)) {
+                canteen.style.display = 'block';
+                totalCanteensFound++;
+            } else {
+                canteen.style.display = 'none';
+            }
+        });
+        noResultsMessage.style.display = totalCanteensFound === 0 ? 'block' : 'none';
+    }
+    searchInput.addEventListener('keyup', performSearch);
+    
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealOnScroll = () => {
+        const windowHeight = window.innerHeight;
+        revealElements.forEach(el => {
+            const elementTop = el.getBoundingClientRect().top;
+            const elementVisible = 100;
+            if (elementTop < windowHeight - elementVisible) {
+                el.classList.add('visible');
+            }
+        });
+    };
+    window.addEventListener('scroll', revealOnScroll);
+    revealOnScroll();
+});
+</script>
+{% endblock %}
+

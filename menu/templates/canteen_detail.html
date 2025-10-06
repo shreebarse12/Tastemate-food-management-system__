@@ -1,0 +1,404 @@
+{% extends "layout.html" %}
+{% block title %}{{ canteen.canteen_name|default:canteen.username }} - Full Menu{% endblock %}
+
+{% block content %}
+<style>
+    /* --- Original Font Import --- */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap');
+
+    /* --- Base & Container Styles (Slightly Tweaked) --- */
+    .menu-container {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding-top: 2rem;
+        padding-bottom: 4rem;
+        min-height: 85vh;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* --- Canteen Header (Unchanged) --- */
+    .canteen-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        animation: fadeInDown 0.8s ease-in-out;
+    }
+    .canteen-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: #343a40;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 0.5rem;
+    }
+    .canteen-header h1::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background-color: #ff6f61;
+        border-radius: 2px;
+    }
+
+    /* --- Menu Controls (Unchanged) --- */
+    .menu-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+        animation: fadeInUp 0.8s ease-in-out 0.2s;
+        animation-fill-mode: backwards;
+    }
+    .filter-btn {
+        background-color: #fff;
+        color: #343a40;
+        border: 2px solid #ddd;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .filter-btn:hover, .filter-btn.active {
+        background-color: #ff6f61;
+        color: #fff;
+        border-color: #ff6f61;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .search-bar {
+        max-width: 300px;
+        border: 2px solid #ddd;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+    .search-bar:focus {
+        border-color: #ff6f61;
+        box-shadow: 0 0 0 0.2rem rgba(255, 111, 97, 0.25);
+    }
+
+    /* --- NEW: Dish Item Animation --- */
+    .dish-item {
+        transition: transform 0.4s ease, opacity 0.4s ease;
+    }
+    .dish-item.hide {
+        transform: scale(0.9);
+        opacity: 0;
+        display: none;
+    }
+    
+    /* --- Dish Card (Enhanced) --- */
+    .dish-card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        opacity: 0; /* Initially hidden for animation */
+        transform: translateY(20px);
+        animation: fadeIn 0.5s ease-in-out forwards;
+    }
+    .dish-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+    }
+    .dish-card .card-img-container {
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+    }
+    .dish-card .card-img-top {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .dish-card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+    .dish-card .card-body {
+        padding: 1.25rem;
+    }
+    .dish-card .card-title {
+        font-weight: 600;
+        color: #343a40;
+    }
+    .dish-card .dish-price {
+        color: #ff6f61;
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    /* --- NEW: Order Button Style --- */
+    .btn-order {
+        background: linear-gradient(45deg, #ff6f61, #ff8c7f);
+        border: none;
+        color: white;
+        font-weight: 600;
+        border-radius: 50px;
+        padding: 0.6rem 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 111, 97, 0.3);
+    }
+    .btn-order:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(255, 111, 97, 0.5);
+        color: white;
+    }
+
+    /* --- Reviews Section (Enhanced) --- */
+    .reviews-section {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reviews-section.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .review-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        border-left: 5px solid #ff6f61;
+    }
+    .review-card strong {
+        color: #343a40;
+    }
+    .review-card .rating-stars {
+        color: #f39c12;
+    }
+    .review-form-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+    }
+    
+    /* --- NEW: Star Rating Form Style --- */
+    .star-rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        font-size: 1.8rem;
+    }
+    .star-rating input { display: none; }
+    .star-rating label {
+        color: #ccc;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+    .star-rating input:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+        color: #f39c12;
+    }
+
+    /* --- Form Input Styling --- */
+    .form-control.review-comment {
+        border-radius: 10px;
+        border-color: #ddd;
+        min-height: 100px;
+    }
+    .form-control.review-comment:focus {
+        border-color: #ff6f61;
+        box-shadow: 0 0 0 0.2rem rgba(255, 111, 97, 0.25);
+    }
+
+
+    /* --- Keyframe Animations (Unchanged) --- */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="menu-container">
+<div class="container">
+
+    <div class="canteen-header">
+        <h1>{{ canteen.canteen_name|default:canteen.username }}</h1>
+        <p class="lead text-muted">Explore our delicious menu, crafted with care just for you.</p>
+    </div>
+
+    <div class="menu-controls">
+        <button class="btn filter-btn active" data-filter="all">All</button>
+        {% if breakfast %}<button class="btn filter-btn" data-filter="breakfast">🥞 Breakfast</button>{% endif %}
+        {% if lunch %}<button class="btn filter-btn" data-filter="lunch">🍛 Lunch</button>{% endif %}
+        {% if dinner %}<button class="btn filter-btn" data-filter="dinner">🌙 Dinner</button>{% endif %}
+        <input type="text" id="searchInput" class="form-control search-bar" placeholder="Search for a dish...">
+    </div>
+
+    <div class="row" id="dish-grid">
+        {% for dish in breakfast %}
+        <div class="col-lg-4 col-md-6 mb-4 dish-item" data-category="breakfast" data-name="{{ dish.name|lower }}">
+            <div class="dish-card">
+                <div class="card-img-container">
+                    <img src="{{ dish.image.url|default:'https://placehold.co/600x400/f8f9fa/ccc?text=No+Image' }}" class="card-img-top" alt="{{ dish.name }}">
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ dish.name }}</h5>
+                    <p class="dish-price mb-2">₹{{ dish.price }}</p>
+                    <p class="card-text small text-muted flex-grow-1">{{ dish.description|truncatechars:80 }}</p>
+                    <p class="text-muted small mt-2 mb-2">Served: {{ dish.served_date|date:"M d" }}</p>
+                    <a href="{% url 'place_order' dish.id %}" class="btn btn-order mt-auto">Order Now</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% for dish in lunch %}
+        <div class="col-lg-4 col-md-6 mb-4 dish-item" data-category="lunch" data-name="{{ dish.name|lower }}">
+            <div class="dish-card">
+                <div class="card-img-container">
+                    <img src="{{ dish.image.url|default:'https://placehold.co/600x400/f8f9fa/ccc?text=No+Image' }}" class="card-img-top" alt="{{ dish.name }}">
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ dish.name }}</h5>
+                    <p class="dish-price mb-2">₹{{ dish.price }}</p>
+                    <p class="card-text small text-muted flex-grow-1">{{ dish.description|truncatechars:80 }}</p>
+                    <p class="text-muted small mt-2 mb-2">Served: {{ dish.served_date|date:"M d" }}</p>
+                    <a href="{% url 'place_order' dish.id %}" class="btn btn-order mt-auto">Order Now</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% for dish in dinner %}
+        <div class="col-lg-4 col-md-6 mb-4 dish-item" data-category="dinner" data-name="{{ dish.name|lower }}">
+            <div class="dish-card">
+                <div class="card-img-container">
+                    <img src="{{ dish.image.url|default:'https://placehold.co/600x400/f8f9fa/ccc?text=No+Image' }}" class="card-img-top" alt="{{ dish.name }}">
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ dish.name }}</h5>
+                    <p class="dish-price mb-2">₹{{ dish.price }}</p>
+                    <p class="card-text small text-muted flex-grow-1">{{ dish.description|truncatechars:80 }}</p>
+                    <p class="text-muted small mt-2 mb-2">Served: {{ dish.served_date|date:"M d" }}</p>
+                    <a href="{% url 'place_order' dish.id %}" class="btn btn-order mt-auto">Order Now</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div id="no-results" class="col-12 text-center py-5" style="display: none;">
+            <p class="lead text-muted">No dishes found matching your criteria.</p>
+        </div>
+    </div>
+
+    <hr class="mt-5">
+    <div class="reviews-section mt-5">
+        <h3 class="text-center mb-4" style="font-family: 'Playfair Display', serif; font-weight: 700;">Student Reviews</h3>
+
+        {% if reviews %}
+            {% for review in reviews %}
+            <div class="card mt-3 p-3 shadow-sm review-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <strong>{{ review.student.username }}</strong>
+                    <span class="rating-stars">{% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}</span>
+                </div>
+                <p class="mt-2 mb-1">{{ review.comment }}</p>
+                <small class="text-muted text-end">{{ review.created_at|date:"M d, Y" }}</small>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-muted mt-2">No reviews yet. Be the first to share your thoughts!</p>
+        {% endif %}
+
+        {% if request.user.is_authenticated and request.user.is_student %}
+        <div class="card mt-4 p-4 shadow-sm review-form-card">
+            <h4>Write Your Review</h4>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Rating</label>
+                    <div class="star-rating">
+                        <input type="radio" id="5-stars" name="rating" value="5" /><label for="5-stars">★</label>
+                        <input type="radio" id="4-stars" name="rating" value="4" /><label for="4-stars">★</label>
+                        <input type="radio" id="3-stars" name="rating" value="3" /><label for="3-stars">★</label>
+                        <input type="radio" id="2-stars" name="rating" value="2" /><label for="2-stars">★</label>
+                        <input type="radio" id="1-star" name="rating" value="1" /><label for="1-star">★</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="id_comment" class="form-label">Comment</label>
+                    {{ form.comment.as_widget.attrs.class }}
+                    <textarea name="comment" cols="40" rows="4" class="form-control review-comment" required id="id_comment"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Submit Review</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const searchInput = document.getElementById('searchInput');
+    const dishItems = document.querySelectorAll('.dish-item');
+    const noResultsMessage = document.getElementById('no-results');
+
+    // --- ENHANCED: Staggered animation on page load ---
+    dishItems.forEach((item, index) => {
+        item.style.animationDelay = `${index * 0.05}s`;
+    });
+
+    function filterDishes() {
+        const activeCategory = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+        const searchTerm = searchInput.value.toLowerCase();
+        let itemsFound = false;
+
+        dishItems.forEach(item => {
+            const itemCategory = item.getAttribute('data-category');
+            const itemName = item.getAttribute('data-name');
+
+            const categoryMatch = activeCategory === 'all' || itemCategory === activeCategory;
+            const searchMatch = itemName.includes(searchTerm);
+
+            if (categoryMatch && searchMatch) {
+                item.classList.remove('hide');
+                itemsFound = true;
+            } else {
+                item.classList.add('hide');
+            }
+        });
+        
+        noResultsMessage.style.display = itemsFound ? 'none' : 'block';
+    }
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            filterDishes();
+        });
+    });
+
+    searchInput.addEventListener('keyup', filterDishes);
+    
+    // --- NEW: Intersection Observer for scroll animations ---
+    const reviewsSection = document.querySelector('.reviews-section');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                reviewsSection.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    observer.observe(reviewsSection);
+});
+</script>
+{% endblock %}

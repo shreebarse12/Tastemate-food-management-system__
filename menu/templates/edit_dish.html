@@ -1,0 +1,106 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Edit {{ dish.name }} - TasteMate{% endblock %}
+
+{% block content %}
+<style>
+  /* Dedicated container for the edit page, themed to match */
+  .edit-dish-container {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #e0f7fa 0%, #d1e5f0 100%);
+    /* This makes the container fill 100% of its parent's (the <main> tag) height */
+    height: 100%; 
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Card styling consistent with the dashboard's form-card */
+  .edit-dish-container .card {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.8s ease-in-out;
+    background: #fff;
+    width: 100%;
+    max-width: 550px;
+    z-index: 1;
+  }
+
+  .edit-dish-container .card-header {
+    background-color: var(--primary-color, #007BFF);
+    color: #fff;
+    font-weight: 700;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .edit-dish-container .form-label {
+    font-weight: 600;
+    color: var(--text-dark, #212529);
+  }
+  
+  .edit-dish-container .form-control, .edit-dish-container .form-select {
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid #ced4da;
+  }
+
+  .edit-dish-container .form-control:focus, .edit-dish-container .form-select:focus {
+      border-color: var(--primary-color, #007BFF);
+      box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+  }
+
+  @keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<div class="edit-dish-container">
+  <div class="row justify-content-center w-100 px-3">
+    <div class="col-md-8 col-lg-7">
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <h4 class="mb-0">Edit "{{ dish.name }}"</h4>
+        </div>
+        <div class="card-body p-4 p-md-5">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            {% for field in form %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {% if field.name == 'is_veg' or field.name == 'available' %}
+                  <div class="form-check form-switch mt-1">
+                    {% render_field field class="form-check-input" %}
+                    <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.help_text }}</label>
+                  </div>
+                {% else %}
+                  {% render_field field class="form-control" %}
+                {% endif %}
+                
+                {% for error in field.errors %}
+                  <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+              <a href="{% url 'canteen_dashboard' %}" class="btn btn-secondary rounded-pill px-4">Cancel</a>
+              <button type="submit" class="btn btn-primary rounded-pill px-4">Update Dish</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

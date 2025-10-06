@@ -1,0 +1,122 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %} <!-- Load widget tweaks -->
+
+{% block title %}Register - TasteMate{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h3 class="card-title text-center mb-4">Sign Up</h3>
+
+        <!-- Show Django messages (success, error, info) -->
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <!-- Show non-field form errors (like password mismatch) -->
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+              <div>{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="POST">
+          {% csrf_token %}
+
+
+          <!-- Username -->
+          <div class="mb-3">
+            <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+            {{ form.username|add_class:"form-control" }}
+            {% for error in form.username.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Email -->
+          <div class="mb-3">
+            <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+            {{ form.email|add_class:"form-control" }}
+            {% for error in form.email.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Role -->
+          <div class="mb-3">
+            <label for="{{ form.role.id_for_label }}" class="form-label">Role</label>
+            {{ form.role|add_class:"form-select" }}
+            {% for error in form.role.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Phone -->
+          <div class="mb-3">
+            <label for="{{ form.phone.id_for_label }}" class="form-label">Phone</label>
+            {{ form.phone|add_class:"form-control" }}
+            {% for error in form.phone.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Address -->
+          <div class="mb-3">
+            <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
+            {{ form.address|add_class:"form-control" }}
+            {% for error in form.address.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Canteen Name -->
+          <div class="mb-3">
+            <label for="{{ form.canteen_name.id_for_label }}" class="form-label">Canteen Name</label>
+            {{ form.canteen_name|add_class:"form-control" }}
+            {% for error in form.canteen_name.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Password -->
+          <div class="mb-3">
+            <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+            {{ form.password1|add_class:"form-control" }}
+            {% for error in form.password1.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="mb-3">
+            <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+            {{ form.password2|add_class:"form-control" }}
+            {% for error in form.password2.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-primary">Register</button>
+          </div>
+
+          <!-- Login link if already registered -->
+          <p class="text-center">
+            Already have an account? 
+            <a href="{% url 'login' %}" class="text-decoration-none">Login here</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
